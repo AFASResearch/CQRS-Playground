@@ -3,7 +3,7 @@ using CQRSMicroservices.Framework;
 
 namespace CQRSMicroservices.Articles
 {
-  internal class ArticleUnsaleableEvent : Event
+  public class MakeArticleUnavailableCommand : Command
   {
     public Guid ArticleId { get; set; }
 

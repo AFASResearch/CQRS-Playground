@@ -11,8 +11,8 @@ namespace CQRSMicroservices.Articles
     {
       RegisterHandler<CustomerCreatedEvent>(Handle);
       RegisterHandler<ArticleCreatedEvent>(Handle);
-      RegisterHandler<ArticleUnsaleableEvent>(Handle);
-      RegisterHandler<ArticleSaleableEvent>(Handle);
+      RegisterHandler<ArticleUnavailableEvent>(Handle);
+      RegisterHandler<ArticleAvailableEvent>(Handle);
       RegisterHandler<ArticleSoldEvent>(Handle);
     }
 
@@ -29,23 +29,23 @@ namespace CQRSMicroservices.Articles
     {
       await Repository.Add(@event.ArticleId, new JObject(
         new JProperty("ArticleId", @event.ArticleId),
-        new JProperty("Saleable", true),
+        new JProperty("Available", true),
         new JProperty("Sold", new JArray()),
         new JProperty("Description", @event.Description),
         new JProperty("Price", @event.Price)));
     }
 
-    private async Task Handle(ArticleSaleableEvent @event)
+    private async Task Handle(ArticleAvailableEvent @event)
     {
       var articleObject = await Repository.Get(@event.ArticleId);
-      articleObject.Property("Saleable").Value = true;
+      articleObject.Property("Available").Value = true;
       await Repository.Update(@event.ArticleId, articleObject);
     }
 
-    private async Task Handle(ArticleUnsaleableEvent @event)
+    private async Task Handle(ArticleUnavailableEvent @event)
     {
       var articleObject = await Repository.Get(@event.ArticleId);
-      articleObject.Property("Saleable").Value = false;
+      articleObject.Property("Available").Value = false;
       await Repository.Update(@event.ArticleId, articleObject);
     }
 

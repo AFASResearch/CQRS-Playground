@@ -5,34 +5,34 @@ namespace CQRSMicroservices.Articles
 {
   public class ArticleAggregateRoot : AggregateRoot
   {
-    private bool _saleable;
+    private bool _available;
     private decimal _price;
 
     public ArticleAggregateRoot()
     {
       RegisterApply<ArticleCreatedEvent>(Apply);
-      RegisterApply<ArticleUnsaleableEvent>(Apply);
-      RegisterApply<ArticleSaleableEvent>(Apply);
+      RegisterApply<ArticleUnavailableEvent>(Apply);
+      RegisterApply<ArticleAvailableEvent>(Apply);
       RegisterHandler<CreateArticleCommand>(Handle);
-      RegisterHandler<MakeArticleUnsaleableCommand>(Handle);
-      RegisterHandler<MakeArticleSaleableCommand>(Handle);
+      RegisterHandler<MakeArticleUnavailableCommand>(Handle);
+      RegisterHandler<MakeArticleAvailableCommand>(Handle);
       RegisterHandler<SellArticleCommand>(Handle);
     }
 
     private void Apply(ArticleCreatedEvent @event)
     {
-      _saleable = true;
+      _available = true;
       _price = @event.Price;
     }
 
-    private void Apply(ArticleUnsaleableEvent @event)
+    private void Apply(ArticleUnavailableEvent @event)
     {
-      _saleable = false;
+      _available = false;
     }
 
-    private void Apply(ArticleSaleableEvent @event)
+    private void Apply(ArticleAvailableEvent @event)
     {
-      _saleable = true;
+      _available = true;
     }
 
     private void Handle(CreateArticleCommand command)
@@ -54,21 +54,21 @@ namespace CQRSMicroservices.Articles
       });
     }
 
-    private void Handle(MakeArticleUnsaleableCommand command)
+    private void Handle(MakeArticleUnavailableCommand command)
     {
-      RaiseEvent(new ArticleUnsaleableEvent { ArticleId = command.ArticleId });
+      RaiseEvent(new ArticleUnavailableEvent { ArticleId = command.ArticleId });
     }
 
-    private void Handle(MakeArticleSaleableCommand command)
+    private void Handle(MakeArticleAvailableCommand command)
     {
-      RaiseEvent(new ArticleSaleableEvent { ArticleId = command.ArticleId });
+      RaiseEvent(new ArticleAvailableEvent { ArticleId = command.ArticleId });
     }
 
     private void Handle(SellArticleCommand command)
     {
-      if(!_saleable)
+      if(!_available)
       {
-        throw new Exception($"This article is unsaleable.");
+        throw new Exception("This article is unavailable.");
       }
       
       RaiseEvent(new ArticleSoldEvent { ArticleId = command.ArticleId, CustomerId = command.CustomerId, Price = _price });

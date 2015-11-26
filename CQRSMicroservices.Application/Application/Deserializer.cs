@@ -32,15 +32,15 @@ namespace CQRSMicroservices.Application
             Price = decimal.Parse(commandBody["Price"].Value<string>(), System.Globalization.CultureInfo.InvariantCulture)
           };
 
-        case "CQRSMicroservices.Articles.MakeArticleSaleableCommand":
+        case "CQRSMicroservices.Articles.MakeArticleAvailableCommand":
 
-          return new MakeArticleSaleableCommand
+          return new MakeArticleAvailableCommand
           {
             ArticleId = Guid.Parse(commandBody["ArticleId"].Value<string>()),
           };
 
-        case "CQRSMicroservices.Articles.MakeArticleUnsaleableCommand":
-          return new MakeArticleUnsaleableCommand
+        case "CQRSMicroservices.Articles.MakeArticleUnavailableCommand":
+          return new MakeArticleUnavailableCommand
           {
             ArticleId = Guid.Parse(commandBody["ArticleId"].Value<string>()),
           };
@@ -85,15 +85,15 @@ namespace CQRSMicroservices.Application
             Price = decimal.Parse(eventBody["Price"].Value<string>(), CultureInfo.InvariantCulture)
           };
 
-        case "CQRSMicroservices.Articles.ArticleSaleableEvent":
+        case "CQRSMicroservices.Articles.ArticleAvailableEvent":
 
-          return new ArticleSaleableEvent
+          return new ArticleAvailableEvent
           {
             ArticleId = Guid.Parse(eventBody["ArticleId"].Value<string>()),
           };
 
-        case "CQRSMicroservices.Articles.ArticleUnsaleableEvent":
-          return new ArticleUnsaleableEvent
+        case "CQRSMicroservices.Articles.ArticleUnavailableEvent":
+          return new ArticleUnavailableEvent
           {
             ArticleId = Guid.Parse(eventBody["ArticleId"].Value<string>()),
           };

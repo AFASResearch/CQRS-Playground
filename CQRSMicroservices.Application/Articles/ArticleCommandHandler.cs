@@ -8,8 +8,8 @@ namespace CQRSMicroservices.Articles
     public ArticleCommandHandler()
     {
       RegisterHandler<CreateArticleCommand>(Handle);
-      RegisterHandler<MakeArticleUnsaleableCommand>(Handle);
-      RegisterHandler<MakeArticleSaleableCommand>(Handle);
+      RegisterHandler<MakeArticleUnavailableCommand>(Handle);
+      RegisterHandler<MakeArticleAvailableCommand>(Handle);
       RegisterHandler<SellArticleCommand>(Handle);
     }
 
@@ -18,12 +18,12 @@ namespace CQRSMicroservices.Articles
       await Repository.ExecuteOnNew<ArticleAggregateRoot>(command.ArticleId, command);
     }
 
-    private async Task Handle(MakeArticleUnsaleableCommand command)
+    private async Task Handle(MakeArticleUnavailableCommand command)
     {
       await Repository.ExecuteOn<ArticleAggregateRoot>(command.ArticleId, command);
     }
 
-    private async Task Handle(MakeArticleSaleableCommand command)
+    private async Task Handle(MakeArticleAvailableCommand command)
     {
       await Repository.ExecuteOn<ArticleAggregateRoot>(command.ArticleId, command);
     }

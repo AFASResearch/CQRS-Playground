@@ -54,13 +54,13 @@
     <Compile Include="Articles\ArticleCreatedEvent.cs" />
     <Compile Include="Articles\ArticleQueryHandler.cs" />
     <Compile Include="Articles\ArticleQueryModelBuilder.cs" />
-    <Compile Include="Articles\ArticleSaleableEvent.cs" />
+    <Compile Include="Articles\ArticleAvailableEvent.cs" />
     <Compile Include="Articles\ArticleSoldEvent.cs" />
-    <Compile Include="Articles\ArticleUnsaleableEvent.cs" />
+    <Compile Include="Articles\ArticleUnavailableEvent.cs" />
     <Compile Include="Articles\CreateArticleCommand.cs" />
     <Compile Include="Articles\GetArticleQuery.cs" />
-    <Compile Include="Articles\MakeArticleSaleableCommand.cs" />
-    <Compile Include="Articles\MakeArticleUnsaleableCommand.cs" />
+    <Compile Include="Articles\MakeArticleAvailableCommand.cs" />
+    <Compile Include="Articles\MakeArticleUnavailableCommand.cs" />
     <Compile Include="Articles\SellArticleCommand.cs" />
     <Compile Include="Application\Deserializer.cs" />
     <Compile Include="Customers\CreateCustomerCommand.cs" />
