@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Threading;
 using CQRSMicroservices.Application;
 using CQRSMicroservices.Framework;
-using CQRSMicroservicesSample.Webserver.Middleware;
+using CQRSMicroservices.Web.Middleware;
 using Owin;
 
 namespace CQRSMicroservices.ServiceFabric.WebService

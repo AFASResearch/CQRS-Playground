@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +7,7 @@ using Microsoft.Owin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace CQRSMicroservicesSample.Webserver.Middleware
+namespace CQRSMicroservices.Web.Middleware
 {
   public class CommandMiddleware : OwinMiddleware
   {
@@ -21,7 +20,8 @@ namespace CQRSMicroservicesSample.Webserver.Middleware
 
     public override async Task Invoke(IOwinContext context)
     {
-      if(context.Request.Method.Equals("post", StringComparison.OrdinalIgnoreCase) && context.Request.Path.GetExtension() == "command")
+      if(context.Request.Method.Equals("post", StringComparison.OrdinalIgnoreCase) && 
+         context.Request.Path.GetExtension().Equals("command", StringComparison.OrdinalIgnoreCase))
       {
         try
         {

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CQRSMicroservices.Framework;
 using Microsoft.Owin;
 
-namespace CQRSMicroservicesSample.Webserver.Middleware
+namespace CQRSMicroservices.Web.Middleware
 {
   public class QueryMiddleware : OwinMiddleware
   {
@@ -19,7 +18,8 @@ namespace CQRSMicroservicesSample.Webserver.Middleware
 
     public override async Task Invoke(IOwinContext context)
     {
-      if(context.Request.Method.Equals("get", StringComparison.OrdinalIgnoreCase) && context.Request.Path.GetExtension() == "query")
+      if(context.Request.Method.Equals("get", StringComparison.OrdinalIgnoreCase) && 
+         context.Request.Path.GetExtension().Equals("query", StringComparison.OrdinalIgnoreCase))
       {
         try
         {
