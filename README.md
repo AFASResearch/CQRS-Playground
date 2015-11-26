@@ -9,3 +9,9 @@ You will need the following things:
 
 * Visual Studio 2015
 * [Service Fabric Preview SDK 1.4.87](https://azure.microsoft.com/en-us/services/service-fabric/)
+
+You can either run CQRSMicroservices.Console or CQRSMicroservices.ServiceFabric.Application as startup project.
+
+The console application can run in-process or can connect to a HTTP webserver (running in ServiceFabric).
+
+The ServiceFabric webservice runs on port 12121. See the console application for example code that sends commands or queries.
