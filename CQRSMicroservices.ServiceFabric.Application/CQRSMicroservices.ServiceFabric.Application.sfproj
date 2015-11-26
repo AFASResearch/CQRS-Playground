@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Service Fabric Tools\Microsoft.VisualStudio.Azure.Fabric.ApplicationProject.props" />
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>b83a5319-dfd5-4d9f-a9d4-fcd30c966dba</ProjectGuid>
+    <ProjectVersion>0.11</ProjectVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="ApplicationManifest.xml" />
+    <None Include="ApplicationParameters\Cloud.xml" />
+    <None Include="ApplicationParameters\Local.xml" />
+    <None Include="PublishProfiles\Cloud.xml" />
+    <None Include="PublishProfiles\Local.xml" />
+    <None Include="Scripts\Deploy-FabricApplication.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CQRSMicroservices.ServiceFabric.AggregateRootActor\CQRSMicroservices.ServiceFabric.AggregateRootActor.csproj" />
+    <ProjectReference Include="..\CQRSMicroservices.ServiceFabric.EventBusService\CQRSMicroservices.ServiceFabric.EventBusService.csproj" />
+    <ProjectReference Include="..\CQRSMicroservices.ServiceFabric.QueryModelBuilderService\CQRSMicroservices.ServiceFabric.QueryModelBuilderService.csproj" />
+    <ProjectReference Include="..\CQRSMicroservices.ServiceFabric.WebService\CQRSMicroservices.ServiceFabric.WebService.csproj" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Service Fabric Tools\Microsoft.VisualStudio.Azure.Fabric.ApplicationProject.targets" />
+</Project>

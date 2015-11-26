@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="CQRSMicroservices.ServiceFabric.ApplicationType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+   <Parameters>
+      <Parameter Name="AggregateRootActorService_PartitionCount" DefaultValue="10" />
+      <Parameter Name="WebService_InstanceCount" DefaultValue="-1" />
+      <Parameter Name="QueryModelBuilderService_MinReplicaSetSize" DefaultValue="2" />
+      <Parameter Name="QueryModelBuilderService_PartitionCount" DefaultValue="1" />
+      <Parameter Name="QueryModelBuilderService_TargetReplicaSetSize" DefaultValue="3" />
+      <Parameter Name="EventBusService_MinReplicaSetSize" DefaultValue="2" />
+      <Parameter Name="EventBusService_PartitionCount" DefaultValue="1" />
+      <Parameter Name="EventBusService_TargetReplicaSetSize" DefaultValue="3" />
+   </Parameters>
+   <ServiceManifestImport>
+      <ServiceManifestRef ServiceManifestName="CQRSMicroservices.ServiceFabric.AggregateRootActorPkg" ServiceManifestVersion="1.0.0" />
+   </ServiceManifestImport>
+   <ServiceManifestImport>
+      <ServiceManifestRef ServiceManifestName="CQRSMicroservices.ServiceFabric.WebServicePkg" ServiceManifestVersion="1.0.0" />
+      <ConfigOverrides />
+   </ServiceManifestImport>
+   <ServiceManifestImport>
+      <ServiceManifestRef ServiceManifestName="CQRSMicroservices.ServiceFabric.QueryModelBuilderServicePkg" ServiceManifestVersion="1.0.0" />
+      <ConfigOverrides />
+   </ServiceManifestImport>
+   <ServiceManifestImport>
+      <ServiceManifestRef ServiceManifestName="CQRSMicroservices.ServiceFabric.EventBusServicePkg" ServiceManifestVersion="1.0.0" />
+      <ConfigOverrides />
+   </ServiceManifestImport>
+   <DefaultServices>
+      <Service Name="AggregateRootActorService" GeneratedIdRef="ccec184a-598a-45a2-a98b-bec765f87210">
+         <StatelessService ServiceTypeName="AggregateRootActorServiceType">
+            <UniformInt64Partition PartitionCount="[AggregateRootActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+         </StatelessService>
+      </Service>
+      <Service Name="WebService">
+         <StatelessService ServiceTypeName="WebServiceType" InstanceCount="[WebService_InstanceCount]">
+            <SingletonPartition />
+         </StatelessService>
+      </Service>
+      <Service Name="QueryModelBuilderService">
+         <StatefulService ServiceTypeName="QueryModelBuilderServiceType" TargetReplicaSetSize="[QueryModelBuilderService_TargetReplicaSetSize]" MinReplicaSetSize="[QueryModelBuilderService_MinReplicaSetSize]">
+            <NamedPartition>
+               <Partition Name="CQRSMicroservices.Articles.ArticleQueryModelBuilder, CQRSMicroservices.Application" />
+               <Partition Name="CQRSMicroservices.Customers.CustomerQueryModelBuilder, CQRSMicroservices.Application" />
+            </NamedPartition>
+         </StatefulService>
+      </Service>
+      <Service Name="EventBusService">
+         <StatefulService ServiceTypeName="EventBusServiceType" TargetReplicaSetSize="[EventBusService_TargetReplicaSetSize]" MinReplicaSetSize="[EventBusService_MinReplicaSetSize]">
+            <SingletonPartition />
+         </StatefulService>
+      </Service>
+   </DefaultServices>
+</ApplicationManifest>
