@@ -1,11 +1,8 @@
 ﻿using Microsoft.ServiceFabric.Services.Runtime;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Tracing;
 using System.Fabric;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CQRSMicroservices.ServiceFabric.WebService

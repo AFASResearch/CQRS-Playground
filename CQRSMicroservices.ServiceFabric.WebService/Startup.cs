@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Fabric;
-using System.IO;
 using System.Net;
-using System.Reflection;
 using System.Threading;
 using CQRSMicroservices.Application;
 using CQRSMicroservices.Framework;

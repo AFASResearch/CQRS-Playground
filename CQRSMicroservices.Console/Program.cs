@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using CQRSMicroservices.Application;
 using CQRSMicroservices.Articles;
-using CQRSMicroservices.Customers;
 using CQRSMicroservices.Framework;
 
 namespace CQRSMicroservices.Console

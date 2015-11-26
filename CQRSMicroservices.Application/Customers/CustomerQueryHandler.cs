@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using CQRSMicroservices.Articles;
 using CQRSMicroservices.Framework;
 using Newtonsoft.Json.Linq;
 

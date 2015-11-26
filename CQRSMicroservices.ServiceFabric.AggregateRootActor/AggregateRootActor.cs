@@ -1,9 +1,7 @@
 ﻿using CQRSMicroservices.ServiceFabric.Interfaces;
 using Microsoft.ServiceFabric.Actors;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using CQRSMicroservices.Framework;
 using Microsoft.ServiceFabric.Services.Remoting.Client;
