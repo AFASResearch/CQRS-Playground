@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Fabric;
 using System.Threading;
 using CQRSMicroservices.Application;
 using CQRSMicroservices.Framework;
-using CQRSMicroservices.ServiceFabric.AggregateRootActor;
 using Microsoft.ServiceFabric.Actors;
 
-namespace Actor1
+namespace CQRSMicroservices.ServiceFabric.AggregateRootActor
 {
   internal static class Program
   {

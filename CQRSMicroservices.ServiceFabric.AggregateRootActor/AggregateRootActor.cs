@@ -43,7 +43,6 @@ namespace CQRSMicroservices.ServiceFabric.AggregateRootActor
       return CqrsApplication.GetService<IDeserializer>().CreateCommand(JObject.Parse(command));
     }
 
-    /// <returns></returns>
     private AggregateRoot LoadAggregateRoot(string fullTypeName)
     {
       if(_aggregateRoot == null)
