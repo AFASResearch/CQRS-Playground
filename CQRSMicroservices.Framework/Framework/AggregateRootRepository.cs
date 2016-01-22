@@ -10,7 +10,7 @@ namespace CQRSMicroservices.Framework
     private readonly Dictionary<Guid, AggregateRoot> _aggregateRoots = new Dictionary<Guid, AggregateRoot>();
 
     public EventBus EventBus => CqrsApplication.GetService<EventBus>();
-    public IEventStore EventStore => CqrsApplication.GetEventStore();
+    public IEventStore EventStore => CqrsApplication.GetService<IEventStore>();
   
     public virtual async Task ExecuteOn<T>(Guid aggregateId, Command command) where T: AggregateRoot
     {

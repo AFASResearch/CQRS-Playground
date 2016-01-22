@@ -96,7 +96,7 @@ namespace CQRSMicroservices.Console
       System.Console.WriteLine(document ?? "null");
       System.Console.ReadKey();
 
-      IEnumerable<Event> events = CqrsApplication.GetService<MemoryEventStore>().GetEvents(iphoneId);
+      IEnumerable<Event> events = CqrsApplication.GetService<IEventStore>().GetEvents(iphoneId);
 
       foreach(Event e in events)
       {

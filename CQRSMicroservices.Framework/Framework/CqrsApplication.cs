@@ -23,21 +23,6 @@ namespace CQRSMicroservices.Framework
       _services[typeof(T)] = service;
     }
 
-    public static IEventStore GetEventStore()
-    {
-      object service;
-      if(_services.TryGetValue(typeof(MemoryEventStore), out service))
-      {
-        return (IEventStore)service;
-      }
-      else if(_services.TryGetValue(typeof(FileEventStore), out service))
-      {
-        return (IEventStore)service;
-      }
-
-      return default(IEventStore);
-    }
-
     public static void Bootstrap(
       IEnumerable<CommandHandler> commandHandlers,
       IEnumerable<QueryHandler> queryHandlers,
@@ -48,7 +33,7 @@ namespace CQRSMicroservices.Framework
       SetService(new QueryBus());
       SetService(new AggregateRootRepository());
       SetService(new QueryRepository());
-      SetService(new MemoryEventStore());
+      SetService<IEventStore>(new MemoryEventStore());
 
       RegisterHandlers(commandHandlers, queryHandlers, queryModelBuilders);
     }
@@ -64,7 +49,7 @@ namespace CQRSMicroservices.Framework
       SetService(new QueryBus());
       SetService(new AggregateRootRepository());
       SetService(new QueryRepository());
-      SetService(eventStore);
+      SetService<IEventStore>(eventStore);
 
       RegisterHandlers(commandHandlers, queryHandlers, queryModelBuilders);
     }
@@ -81,6 +66,7 @@ namespace CQRSMicroservices.Framework
       SetService(new MemoryEventStore());
       SetService(aggregateRootRepository);
       SetService(queryRepository);
+      SetService<IEventStore>(new MemoryEventStore());
 
       RegisterHandlers(commandHandlers, queryHandlers, queryModelBuilders);
     }
