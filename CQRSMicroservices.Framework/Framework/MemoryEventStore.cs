@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace CQRSMicroservices.Framework
 {
-  class MemoryEventStore : IEventStore
+  public class MemoryEventStore : IEventStore
   {
 
-    private readonly Dictionary<Guid, List<Event>> _eventstore = new Dictionary<Guid, List<Event>>();
+   private readonly Dictionary<Guid, List<Event>> _eventstore = new Dictionary<Guid, List<Event>>();
 
     public void AddEvents(Guid aggregateGuid, IEnumerable<Event> events)
     {
@@ -29,6 +29,11 @@ namespace CQRSMicroservices.Framework
         return _eventstore[aggregateGuid];
       }
       return Enumerable.Empty<Event>();
+    }
+
+    public IEnumerable<Event> GetEvents(Guid aggregateId, DateTime afterDateTime, DateTime beforeDateTime)
+    {
+      throw new NotImplementedException();
     }
   }
 }

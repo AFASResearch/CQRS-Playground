@@ -10,12 +10,13 @@ namespace CQRSMicroservices.Framework
     private readonly Dictionary<Guid, AggregateRoot> _aggregateRoots = new Dictionary<Guid, AggregateRoot>();
 
     public EventBus EventBus => CqrsApplication.GetService<EventBus>();
+    public IEventStore EventStore => CqrsApplication.GetEventStore();
   
     public virtual async Task ExecuteOn<T>(Guid aggregateId, Command command) where T: AggregateRoot
     {
       T aggregateRoot = LoadAggregateRoot<T>(aggregateId);
       aggregateRoot.Handle(command);
-      await SaveAndDispatchEvents(aggregateRoot);
+      await SaveAndDispatchEvents(aggregateId, aggregateRoot);
     }
 
     public virtual async Task ExecuteOnNew<T>(Guid aggregateId, Command command) where T : AggregateRoot
@@ -29,7 +30,7 @@ namespace CQRSMicroservices.Framework
       _aggregateRoots.Add(aggregateId, aggregateRoot);
 
       aggregateRoot.Handle(command);
-      await SaveAndDispatchEvents(aggregateRoot);
+      await SaveAndDispatchEvents(aggregateId, aggregateRoot);
     }
 
     /// <summary>
@@ -43,15 +44,17 @@ namespace CQRSMicroservices.Framework
       AggregateRoot root;
       if(_aggregateRoots.TryGetValue(id, out root))
       {
+        root.LoadHistory(EventStore.GetEvents(id));
         return (T)root;
       }
       throw new KeyNotFoundException($"AggregateRoot with id {id} does not exist.");
     }
 
-    private async Task SaveAndDispatchEvents(AggregateRoot root)
+    private async Task SaveAndDispatchEvents(Guid aggregateId, AggregateRoot root)
     {
       var commit = root.Commit();
-      // We should make these persistent somewhere
+
+      EventStore.AddEvents(aggregateId, commit.Events);
 
       await Task.WhenAll(commit.Events.Select(EventBus.Dispatch));
     }

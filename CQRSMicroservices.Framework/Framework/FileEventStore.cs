@@ -14,5 +14,10 @@ namespace CQRSMicroservices.Framework
     {
       throw new NotImplementedException();
     }
+
+    public IEnumerable<Event> GetEvents(Guid aggregateId, DateTime afterDateTime, DateTime beforeDateTime)
+    {
+      throw new NotImplementedException();
+    }
   }
 }

@@ -12,5 +12,7 @@ namespace CQRSMicroservices.Framework
 
     IEnumerable<Event> GetEvents(Guid aggregateId);
 
+    IEnumerable<Event> GetEvents(Guid aggregateId, DateTime afterDateTime, DateTime beforeDateTime);
+
   }
 }

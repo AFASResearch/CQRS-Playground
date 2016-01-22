@@ -9,6 +9,7 @@ namespace CQRSMicroservices.Framework
     private readonly Dictionary<Type, Action<Command>> _handlers = new Dictionary<Type, Action<Command>>();
 
     private readonly List<Event> _uncommittedEvents = new List<Event>();
+    public DateTime LastEventDateTime = new DateTime();
 
     protected void RaiseEvent(Event @event)
     {
@@ -50,6 +51,18 @@ namespace CQRSMicroservices.Framework
       {
         throw new NotImplementedException($"No handler for commandtype {command.GetType().FullName}");
       }
+    }
+
+    public void LoadHistory(IEnumerable<Event> historyEvents)
+    {
+      if(historyEvents != null)
+      {
+        foreach(Event e in historyEvents)
+        {
+          ApplyOnThis(e);
+        }
+      }
+
     }
 
     /// <summary>

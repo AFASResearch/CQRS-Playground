@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CQRSMicroservices.Application;
@@ -93,6 +94,15 @@ namespace CQRSMicroservices.Console
       });
 
       System.Console.WriteLine(document ?? "null");
+      System.Console.ReadKey();
+
+      IEnumerable<Event> events = CqrsApplication.GetService<MemoryEventStore>().GetEvents(iphoneId);
+
+      foreach(Event e in events)
+      {
+        System.Console.WriteLine(e.ToJson());
+      }
+
       System.Console.ReadKey();
     }
   }
