@@ -9,10 +9,12 @@ namespace CQRSMicroservices.Framework
     private readonly Dictionary<Type, Action<Command>> _handlers = new Dictionary<Type, Action<Command>>();
 
     private readonly List<Event> _uncommittedEvents = new List<Event>();
-    public DateTime LastEventDateTime = new DateTime();
+    public DateTime LastEventDateTime = DateTime.MinValue;
 
     protected void RaiseEvent(Event @event)
     {
+      @event._EventDate = DateTime.Now;
+      LastEventDateTime = @event._EventDate;
       ApplyOnThis(@event);
       _uncommittedEvents.Add(@event);
     }
