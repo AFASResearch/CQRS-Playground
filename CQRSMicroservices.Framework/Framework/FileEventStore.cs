@@ -39,27 +39,30 @@ namespace CQRSMicroservices.Framework
       try
       {
         string path = Path.Combine(this._dir, aggregateId.ToString() + ".txt");
+        if (File.Exists(path))
+        { 
         FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        using(StreamReader streamReader = new StreamReader(stream))
-        {
-          while(!streamReader.EndOfStream)
+          using(StreamReader streamReader = new StreamReader(stream))
           {
-            string text = streamReader.ReadLine();
-            try
+            while(!streamReader.EndOfStream)
             {
-              if(text != null)
+              string text = streamReader.ReadLine();
+              try
               {
-                DateTime eventDate = DateTime.Parse(text.Substring(0, 19));
-                JObject eventJson = JObject.Parse(text.Substring(19));
-                Event @event = this._deserializer.CreateEvent(eventJson);
-                @event._EventDate = eventDate;
-                events.Add(@event);
+                if(text != null)
+                {
+                  DateTime eventDate = DateTime.Parse(text.Substring(0, 19));
+                  JObject eventJson = JObject.Parse(text.Substring(19));
+                  Event @event = this._deserializer.CreateEvent(eventJson);
+                  @event._EventDate = eventDate;
+                  events.Add(@event);
+                }
               }
-            }
-            catch(Exception value)
-            {
-              Console.WriteLine(value);
-              Console.WriteLine(text.Substring(0, 19) + "AND" + text.Substring(19));
+              catch(Exception value)
+              {
+                Console.WriteLine(value);
+                Console.WriteLine(text.Substring(0, 19) + "AND" + text.Substring(19));
+              }
             }
           }
         }
@@ -77,38 +80,41 @@ namespace CQRSMicroservices.Framework
       try
       {
         string path = Path.Combine(this._dir, aggregateId.ToString() + ".txt");
-        FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        using(StreamReader streamReader = new StreamReader(stream))
+        if(File.Exists(path))
         {
-          while(!streamReader.EndOfStream)
+          FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+          using(StreamReader streamReader = new StreamReader(stream))
           {
-            string text = streamReader.ReadLine();
-            try
+            while(!streamReader.EndOfStream)
             {
-              if(text != null)
+              string text = streamReader.ReadLine();
+              try
               {
-                DateTime dateTime = DateTime.Parse(text.Substring(0, 19));
-                if(dateTime > beforeDateTime)
+                if(text != null)
                 {
-                  return events;
-                }
-                else if(dateTime < afterDateTime)
-                {
-                  continue;
-                }
-                else
-                {
-                  JObject eventJson = JObject.Parse(text.Substring(19));
-                  Event @event = this._deserializer.CreateEvent(eventJson);
-                  @event._EventDate = dateTime;
-                  events.Add(@event);
+                  DateTime dateTime = DateTime.Parse(text.Substring(0, 19));
+                  if(dateTime > beforeDateTime)
+                  {
+                    return events;
+                  }
+                  else if(dateTime < afterDateTime)
+                  {
+                    continue;
+                  }
+                  else
+                  {
+                    JObject eventJson = JObject.Parse(text.Substring(19));
+                    Event @event = this._deserializer.CreateEvent(eventJson);
+                    @event._EventDate = dateTime;
+                    events.Add(@event);
+                  }
                 }
               }
-            }
-            catch(Exception value)
-            {
-              Console.WriteLine(value);
-              Console.WriteLine(text.Substring(0, 19) + "AND" + text.Substring(19));
+              catch(Exception value)
+              {
+                Console.WriteLine(value);
+                Console.WriteLine(text.Substring(0, 19) + "AND" + text.Substring(19));
+              }
             }
           }
         }
