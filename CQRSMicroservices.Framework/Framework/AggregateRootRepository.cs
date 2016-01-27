@@ -44,7 +44,7 @@ namespace CQRSMicroservices.Framework
       AggregateRoot root;
       if(_aggregateRoots.TryGetValue(id, out root))
       {
-        root.LoadHistory(EventStore.GetEvents(id));
+        root.LoadHistory(EventStore.GetEvents(id, root.LastEventDateTime, DateTime.Now));
         return (T)root;
       }
       throw new KeyNotFoundException($"AggregateRoot with id {id} does not exist.");
