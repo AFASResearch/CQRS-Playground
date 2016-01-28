@@ -52,7 +52,18 @@ namespace CQRSMicroservices.Framework
       SetService<IEventStore>(eventStore);
 
       RegisterHandlers(commandHandlers, queryHandlers, queryModelBuilders);
+
+      Dictionary<Guid, List<Event>> eventstore = eventStore.GetAllEvents();
+      EventBus eventBus = GetService<EventBus>();
+      foreach(var key in eventstore.Keys)
+      {
+        foreach(var @event in eventstore[key])
+        {
+          eventBus.Dispatch(@event);
+        }
+      }
     }
+
     public static void Bootstrap(
       AggregateRootRepository aggregateRootRepository,
       QueryRepository queryRepository,
