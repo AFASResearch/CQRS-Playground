@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace CQRSMicroservices.Framework
 {
@@ -124,6 +125,22 @@ namespace CQRSMicroservices.Framework
         Console.WriteLine("FileEventStore crashing: " + arg);
       }
       return events;
+    }
+
+    public Dictionary<Guid, List<Event>> GetAllEvents()
+    {
+      Dictionary<Guid, List<Event>> eventstore = new Dictionary<Guid, List<Event>>();
+      if(Directory.Exists(_dir))
+      {
+        var files = Directory.GetFiles(_dir, "*.txt").Select(Path.GetFileNameWithoutExtension);
+        foreach(var fileName in files)
+        {
+          Guid g = Guid.Parse(fileName);
+          eventstore.Add(g, GetEvents(g).ToList());
+        }
+      }
+
+      return eventstore;
     }
   }
 }

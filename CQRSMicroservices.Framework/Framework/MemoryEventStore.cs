@@ -56,5 +56,10 @@ namespace CQRSMicroservices.Framework
       }
       return events;
     }
+
+    public Dictionary<Guid, List<Event>> GetAllEvents()
+    {
+      return _eventstore;
+    }
   }
 }
