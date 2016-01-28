@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CQRSMicroservices.Framework
 {
@@ -10,6 +11,8 @@ namespace CQRSMicroservices.Framework
 
     private readonly List<Event> _uncommittedEvents = new List<Event>();
     public DateTime LastEventDateTime = DateTime.MinValue;
+
+    public bool IsNew => LastEventDateTime.Equals(DateTime.MinValue);
 
     protected void RaiseEvent(Event @event)
     {
@@ -57,10 +60,11 @@ namespace CQRSMicroservices.Framework
 
     public void LoadHistory(IEnumerable<Event> historyEvents)
     {
-      if(historyEvents != null)
+      if(historyEvents.Any())
       {
         foreach(Event e in historyEvents)
         {
+          LastEventDateTime = e._EventDate;
           ApplyOnThis(e);
         }
       }
