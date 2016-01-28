@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CQRSMicroservices.Framework;
 
 namespace CQRSMicroservices.Articles
@@ -44,6 +45,10 @@ namespace CQRSMicroservices.Articles
       if(string.IsNullOrEmpty(command.Description) || command.Description.Length > 50)
       {
         throw new CommandValidationException("Description is mandatory, and cannot be longer then 50 characters.");
+      }
+      if(CqrsApplication.GetService<IEventStore>().GetEvents(command.ArticleId).Any())
+      {
+        throw new CommandValidationException("ArticleId Already exists.");
       }
 
       RaiseEvent(new ArticleCreatedEvent
