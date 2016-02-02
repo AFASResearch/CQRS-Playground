@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CQRSMicroservices.Framework
 {
@@ -40,11 +38,11 @@ namespace CQRSMicroservices.Framework
         List<Event> eventsAr = _eventstore[aggregateId];
         foreach(Event e in eventsAr)
         {
-          if(e._EventDate > beforeDateTime)
+          if(e.EventDate > beforeDateTime)
           {
             return events;
           }
-          else if(e._EventDate < afterDateTime)
+          else if(e.EventDate < afterDateTime)
           {
             continue;
           }

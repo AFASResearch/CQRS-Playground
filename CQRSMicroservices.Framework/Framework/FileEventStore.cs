@@ -29,7 +29,7 @@ namespace CQRSMicroservices.Framework
       {
         foreach(Event e in events)
         {
-          streamWriter.WriteLine(e._EventDate + "  " + e.ToJson().Replace("\n", string.Empty).Replace("\r", string.Empty));
+          streamWriter.WriteLine(e.EventDate + "  " + e.ToJson().Replace("\n", string.Empty).Replace("\r", string.Empty));
         }
       }
     }
@@ -55,7 +55,7 @@ namespace CQRSMicroservices.Framework
                   DateTime eventDate = DateTime.Parse(text.Substring(0, 19));
                   JObject eventJson = JObject.Parse(text.Substring(19));
                   Event @event = this._deserializer.CreateEvent(eventJson);
-                  @event._EventDate = eventDate;
+                  @event.EventDate = eventDate;
                   events.Add(@event);
                 }
               }
@@ -106,7 +106,7 @@ namespace CQRSMicroservices.Framework
                   {
                     JObject eventJson = JObject.Parse(text.Substring(19));
                     Event @event = this._deserializer.CreateEvent(eventJson);
-                    @event._EventDate = dateTime;
+                    @event.EventDate = dateTime;
                     events.Add(@event);
                   }
                 }

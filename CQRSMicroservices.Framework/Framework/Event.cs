@@ -6,7 +6,7 @@ namespace CQRSMicroservices.Framework
   public class Event
   {
 
-    public DateTime _EventDate { get; set; }
+    public DateTime EventDate { get; set; }
     public virtual string ToJson()
     {
       string s;

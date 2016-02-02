@@ -16,8 +16,8 @@ namespace CQRSMicroservices.Framework
 
     protected void RaiseEvent(Event @event)
     {
-      @event._EventDate = DateTime.Now;
-      LastEventDateTime = @event._EventDate;
+      @event.EventDate = DateTime.Now;
+      LastEventDateTime = @event.EventDate;
       ApplyOnThis(@event);
       _uncommittedEvents.Add(@event);
     }
@@ -64,7 +64,7 @@ namespace CQRSMicroservices.Framework
       {
         foreach(Event e in historyEvents)
         {
-          LastEventDateTime = e._EventDate;
+          LastEventDateTime = e.EventDate;
           ApplyOnThis(e);
         }
       }
