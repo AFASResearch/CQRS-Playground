@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,72 +10,66 @@ namespace CQRSMicroservices.Conversion
 {
   public class EventReplayer
   {
-    public EventReplayer(EventBus targetBus)
-    {
-      _targetBus = targetBus;
-    }
 
-    private static EventBus _targetBus;
-
-    public async Task ReplayAllEvents(IEventStore eventStore)
+    public IEnumerable<KeyValuePair<Guid, Event>> SimpleReplayEventStore(IEventStore eventStore)
     {
-      Dictionary<Guid, List<Event>> eventstore = eventStore.GetAllEvents();
-      foreach(var key in eventstore.Keys)
+      foreach(KeyValuePair<Guid, IEnumerable<Event>> key in eventStore.GetAllEvents())
       {
-        await ReplayEventList(eventstore[key]);
+        foreach(var e in ReplayEventList(key.Value))
+        {
+          yield return new KeyValuePair<Guid, Event>(key.Key, e);
+        }
       }
     }
 
-    public async Task ReplaySpecificArEvents(IEventStore eventStore, Guid aggregateId)
+    public IEnumerable<Event> ReplayAr(IEventStore eventStore, Guid aggregateId)
     {
-      var eventstore = eventStore.GetEvents(aggregateId);
-      await ReplayEventList(eventstore);
-    }
-
-    public async Task ReplaySetOfArEvents(IEventStore eventStore, List<Guid> aggregateId)
-    {
-      foreach(var a in aggregateId)
+      foreach(var e in ReplayEventList(eventStore.GetEvents(aggregateId)))
       {
-        var events = eventStore.GetEvents(a);
-        await ReplayEventList(events);
+        yield return e;
       }
     }
-  
-    public async Task ReplayAllEventsChronological(IEventStore eventStore)
+
+    public IEnumerable<KeyValuePair<Guid, Event>> ReplaySetOfArChronological(IEventStore eventStore, IEnumerable<Guid> setOfArs)
     {
-      Dictionary<Guid, List<Event>> eventstore = eventStore.GetAllEvents();
-      Dictionary <Guid, EventListIterator> iterators = new Dictionary<Guid, EventListIterator>();
-      SimplePriorityQueue<Guid> priorityQueue = new SimplePriorityQueue<Guid>();
+      var iterators = new Dictionary<Guid, EventListIterator>();
+      var priorityQueue = new SimplePriorityQueue<Guid>();
 
       Boolean finished = false;
 
       // Initiating for each AR with events an EventListIterator and add it to Iterators and insert it into the priorityQueue
-      foreach(var key in eventstore.Keys)
+      foreach(var id in setOfArs)
       {
-        EventListIterator i = new EventListIterator
+        var i = new EventListIterator
         {
-          EventTime = eventstore[key][0].EventDate,
-          EventQueue = new Queue<Event>(eventstore[key])
+          EventTime = eventStore.GetEvents(id).First().EventDate,
+          EventQueue = new Queue<Event>(eventStore.GetEvents(id))
         };
-        iterators.Add(key,i);
-        priorityQueue.Enqueue(key, DateTimeToUnixSeconds(eventstore[key][0].EventDate));
+        iterators.Add(id, i);
+        priorityQueue.Enqueue(id, DateTimeToUnixSeconds(i.EventTime));
       }
 
-    // Take the first from priorityqueue, play this event and add it to the priorityqueue again with the datetime from next event from the AR 
-    while(!finished)
+
+      // Take the first from priorityqueue, play this event and add it to the priorityqueue again with the datetime from next event from the AR 
+      while(!finished)
       {
         if(iterators.Count == 1)
         {
-          await ReplayEventList(iterators[iterators.Keys.First()].EventQueue);
+          var guid = iterators.Keys.First();
+          foreach(var e in ReplayEventList(iterators[guid].EventQueue))
+          {
+            yield return new KeyValuePair<Guid, Event>(guid, e);
+          }
           finished = true;
         }
         else
         {
-          Guid optimumGuid = priorityQueue.Dequeue();
-          Event e = iterators[optimumGuid].GetEvent();
+          var optimumGuid = priorityQueue.Dequeue();
 
-          await _targetBus.Dispatch(e);
-          //System.Console.WriteLine(e.ToJson() + " " + e.EventDate);
+          //Can be optimized with using the first 2 AR's, so we don't have to put the AR back everytime, but only when it passes the 2nd
+          var e = iterators[optimumGuid].GetEvent();
+
+          yield return new KeyValuePair<Guid, Event>(optimumGuid, e);
 
           if(iterators[optimumGuid].Finished)
           {
@@ -89,19 +84,25 @@ namespace CQRSMicroservices.Conversion
       }
     }
 
+    public IEnumerable<KeyValuePair<Guid, Event>> ReplayAllEventsChronological(IEventStore eventStore)
+    {
+      foreach(var p in ReplaySetOfArChronological(eventStore, eventStore.GetExistingArs()))
+      {
+        yield return p;
+      }
+    }
+
     private static double DateTimeToUnixSeconds(DateTime a)
     {
       return a.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
     }
 
 
-    private static async Task ReplayEventList (IEnumerable<Event> events)
+    private static IEnumerable<Event> ReplayEventList(IEnumerable<Event> events)
     {
-      EventBus eventBus = CqrsApplication.GetService<EventBus>();
       foreach(var e in events)
       {
-        await _targetBus.Dispatch(e);
-        //System.Console.WriteLine(e.ToJson()+" "+e.EventDate);
+        yield return e;
       }
     }
 
