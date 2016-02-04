@@ -10,48 +10,41 @@ namespace CQRSMicroservices.Framework
 
     public EventBus EventBus => CqrsApplication.GetService<EventBus>();
     public IEventStore EventStore => CqrsApplication.GetService<IEventStore>();
-  
-    public virtual async Task ExecuteOn<T>(Guid aggregateId, Command command) where T: AggregateRoot
+
+    public virtual async Task ExecuteOn<T>(Guid aggregateId, Command command) where T : AggregateRoot
     {
       T aggregateRoot = LoadAggregateRoot<T>(aggregateId);
 
       if(aggregateRoot.IsNew)
       {
-        //throw new Exception($"AggregateRoot with id {aggregateId} didn't exist.");
-        System.Console.WriteLine("AggregateRoot with id"+aggregateId+ "didn't exist.");
+        throw new Exception($"AggregateRoot with id {aggregateId} didn't exist.");
       }
       try
       {
         aggregateRoot.Handle(command);
       }
-      catch(Exception e)
+      catch
       {
-        Console.WriteLine(e.Message);
-      }   
+        throw new Exception($"Problem with executing command on AR.");
+      }
       await SaveAndDispatchEvents(aggregateId, aggregateRoot);
     }
 
     public virtual async Task ExecuteOnNew<T>(Guid aggregateId, Command command) where T : AggregateRoot
     {
-      //if(_aggregateRoots.ContainsKey(aggregateId))
-      //{
-      //  throw new Exception($"AggregateRoot with id {aggregateId} already exists.");
-      //}
-
       T aggregateRoot = LoadAggregateRoot<T>(aggregateId);
 
       if(!aggregateRoot.IsNew)
       {
-        System.Console.WriteLine("AggregateRoot with id" + aggregateId + "did exist.");
         //throw new Exception($"AggregateRoot with id {aggregateId} did exist.");
       }
       try
       {
         aggregateRoot.Handle(command);
       }
-      catch(Exception e)
+      catch
       {
-        Console.WriteLine(e.Message);
+        throw new Exception($"Problem with executing command on new AR.");
       }
       await SaveAndDispatchEvents(aggregateId, aggregateRoot);
     }
@@ -66,8 +59,9 @@ namespace CQRSMicroservices.Framework
     {
       var aggregateRoot = (T)Activator.CreateInstance(typeof(T));
 
-      var history = EventStore.GetEvents(id, aggregateRoot.LastEventDateTime, DateTime.Now);
+      var history = EventStore.GetEvents(id);
       aggregateRoot.LoadHistory(history);
+
       return aggregateRoot;
     }
 
