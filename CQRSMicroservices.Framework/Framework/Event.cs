@@ -9,10 +9,9 @@ namespace CQRSMicroservices.Framework
     public DateTime EventDate { get; set; }
     public virtual string ToJson()
     {
-      string s;
-      s = $@"{{ ""{GetType().FullName}"" : {{";
+      string s = $@"{{ ""{GetType().FullName}"" : {{";
 
-      var fields = this.GetType().GetProperties();
+      var fields = GetType().GetProperties();
       foreach(PropertyInfo e in fields)
       {
         if(e.Name != "_EventDate")
