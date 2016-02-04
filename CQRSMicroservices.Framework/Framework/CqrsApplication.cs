@@ -6,7 +6,7 @@ namespace CQRSMicroservices.Framework
 {
   public static class CqrsApplication
   {
-    private readonly static Dictionary<Type, object> _services = new Dictionary<Type, object>();
+    private static readonly Dictionary<Type, object> _services = new Dictionary<Type, object>();
 
     public static T GetService<T>()
     {
@@ -53,11 +53,10 @@ namespace CQRSMicroservices.Framework
 
       RegisterHandlers(commandHandlers, queryHandlers, queryModelBuilders);
 
-      Dictionary<Guid, List<Event>> eventstore = eventStore.GetAllEvents();
-      EventBus eventBus = GetService<EventBus>();
-      foreach(var key in eventstore.Keys)
+      var eventBus = GetService<EventBus>();
+      foreach(KeyValuePair<Guid, IEnumerable<Event>> a in eventStore.GetAllEvents())
       {
-        foreach(var @event in eventstore[key])
+        foreach(var @event in a.Value)
         {
           eventBus.Dispatch(@event);
         }
