@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace CQRSMicroservices.Framework
@@ -9,9 +10,9 @@ namespace CQRSMicroservices.Framework
 
     IEnumerable<Event> GetEvents(Guid aggregateId);
 
-    IEnumerable<Event> GetEvents(Guid aggregateId, DateTime afterDateTime, DateTime beforeDateTime);
+    IEnumerable<KeyValuePair<Guid, IEnumerable<Event>>> GetAllEvents();
 
-    Dictionary<Guid, List<Event>> GetAllEvents();
+    IEnumerable<Guid> GetExistingArs();
 
   }
 }

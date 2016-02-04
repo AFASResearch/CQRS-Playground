@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,7 +8,7 @@ namespace CQRSMicroservices.Framework
   public class MemoryEventStore : IEventStore
   {
 
-   private readonly Dictionary<Guid, List<Event>> _eventstore = new Dictionary<Guid, List<Event>>();
+    private readonly Dictionary<Guid, List<Event>> _eventstore = new Dictionary<Guid, List<Event>>();
 
     public void AddEvents(Guid aggregateId, IEnumerable<Event> events)
     {
@@ -29,35 +30,21 @@ namespace CQRSMicroservices.Framework
       return Enumerable.Empty<Event>();
     }
 
-    public IEnumerable<Event> GetEvents(Guid aggregateId, DateTime afterDateTime, DateTime beforeDateTime)
+    IEnumerable<KeyValuePair<Guid, IEnumerable<Event>>> IEventStore.GetAllEvents()
     {
-      List<Event>events = new List<Event>();
-
-      if(_eventstore.ContainsKey(aggregateId))
+      foreach(KeyValuePair<Guid, List<Event>> pair in _eventstore)
       {
-        List<Event> eventsAr = _eventstore[aggregateId];
-        foreach(Event e in eventsAr)
-        {
-          if(e.EventDate > beforeDateTime)
-          {
-            return events;
-          }
-          else if(e.EventDate < afterDateTime)
-          {
-            continue;
-          }
-          else
-          {
-            events.Add(e);
-          }
-        }
+        yield return new KeyValuePair<Guid, IEnumerable<Event>>(pair.Key, pair.Value);
       }
-      return events;
     }
 
-    public Dictionary<Guid, List<Event>> GetAllEvents()
+    public IEnumerable<Guid> GetExistingArs()
     {
-      return _eventstore;
+      foreach(var e in _eventstore.Keys)
+      {
+        yield return e;
+      }
     }
+
   }
 }
