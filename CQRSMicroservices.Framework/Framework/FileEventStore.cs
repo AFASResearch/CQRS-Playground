@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace CQRSMicroservices.Framework
 {
   public class FileEventStore : IEventStore
   {
+    private const string _eventDelimiter = "end event";
     private readonly string _dir;
     private readonly IDeserializer _deserializer;
 
@@ -29,9 +31,9 @@ namespace CQRSMicroservices.Framework
       {
         foreach(var e in events)
         {
-          streamWriter.WriteLine(e.EventDate);
+          streamWriter.WriteLine(e.CommitTimestamp);
           streamWriter.WriteLine(e.ToJson());
-          streamWriter.WriteLine("end event");
+          streamWriter.WriteLine(_eventDelimiter);
         }
       }
     }
@@ -39,34 +41,36 @@ namespace CQRSMicroservices.Framework
     public IEnumerable<Event> GetEvents(Guid aggregateId)
     {
       var events = new List<Event>();
-      string path = Path.Combine(_dir, $"{aggregateId}.txt");
+      var path = Path.Combine(_dir, $"{aggregateId}.txt");
       if(File.Exists(path))
       {
-        var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
 
-        var textAccumalated = String.Empty;
-        var eventDate = DateTime.MinValue;
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        var textAccumalated = new StringBuilder();
+        var currentEventDate = DateTime.MinValue;
+
         using(var streamReader = new StreamReader(stream))
         {
           while(!streamReader.EndOfStream)
           {
             var text = streamReader.ReadLine();
-            DateTime eventDate2;
-            if(DateTime.TryParse(text, out eventDate2))
+            DateTime parsedEventDate;
+
+            if(DateTime.TryParse(text, out parsedEventDate))
             {
-              eventDate = eventDate2;
-              textAccumalated = string.Empty;
+              currentEventDate = parsedEventDate;
+              textAccumalated.Clear();
             }
-            else if(text != null && text.Equals("end event"))
+            else if(text != null && text.Equals(_eventDelimiter))
             {
-              var eventJson = JObject.Parse(textAccumalated);
+              var eventJson = JObject.Parse(textAccumalated.ToString());
               var @event = _deserializer.CreateEvent(eventJson);
-              @event.EventDate = eventDate;
+              @event.CommitTimestamp = currentEventDate;
               events.Add(@event);
             }
             else
             {
-              textAccumalated += text;
+              textAccumalated.Append(text);
             }
           }
         }
@@ -74,7 +78,7 @@ namespace CQRSMicroservices.Framework
       return events;
     }
 
-    public IEnumerable<KeyValuePair<Guid, IEnumerable<Event>>> GetAllEvents()
+    public IEnumerable<KeyValuePair<Guid, IEnumerable<Event>>> GetStreams()
     {
       if(Directory.Exists(_dir))
       {
@@ -87,7 +91,7 @@ namespace CQRSMicroservices.Framework
       }
     }
 
-    public IEnumerable<Guid> GetExistingArs()
+    public IEnumerable<Guid> GetExistingStreamIds()
     {
       if(Directory.Exists(_dir))
       {

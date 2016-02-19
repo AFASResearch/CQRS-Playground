@@ -6,8 +6,7 @@ namespace CQRSMicroservices.Framework
 {
   public class AggregateRootRepository
   {
-    //private readonly Dictionary<Guid, AggregateRoot> _aggregateRoots = new Dictionary<Guid, AggregateRoot>();
-
+    
     public EventBus EventBus => CqrsApplication.GetService<EventBus>();
     public IEventStore EventStore => CqrsApplication.GetService<IEventStore>();
 
@@ -36,7 +35,7 @@ namespace CQRSMicroservices.Framework
 
       if(!aggregateRoot.IsNew)
       {
-        //throw new Exception($"AggregateRoot with id {aggregateId} did exist.");
+        throw new Exception($"AggregateRoot with id {aggregateId} did exist.");
       }
       try
       {
@@ -68,7 +67,6 @@ namespace CQRSMicroservices.Framework
     private async Task SaveAndDispatchEvents(Guid aggregateId, AggregateRoot root)
     {
       var commit = root.Commit();
-
       EventStore.AddEvents(aggregateId, commit.Events);
 
       await Task.WhenAll(commit.Events.Select(EventBus.Dispatch));

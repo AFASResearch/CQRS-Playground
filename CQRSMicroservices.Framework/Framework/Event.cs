@@ -6,7 +6,7 @@ namespace CQRSMicroservices.Framework
   public class Event
   {
 
-    public DateTime EventDate { get; set; }
+    public DateTime CommitTimestamp { get; set; }
     public virtual string ToJson()
     {
       string s = $@"{{ ""{GetType().FullName}"" : {{";

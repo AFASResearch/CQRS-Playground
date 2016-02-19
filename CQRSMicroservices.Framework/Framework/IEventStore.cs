@@ -10,9 +10,9 @@ namespace CQRSMicroservices.Framework
 
     IEnumerable<Event> GetEvents(Guid aggregateId);
 
-    IEnumerable<KeyValuePair<Guid, IEnumerable<Event>>> GetAllEvents();
+    IEnumerable<KeyValuePair<Guid, IEnumerable<Event>>> GetStreams();
 
-    IEnumerable<Guid> GetExistingArs();
+    IEnumerable<Guid> GetExistingStreamIds();
 
   }
 }

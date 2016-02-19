@@ -33,7 +33,7 @@ namespace CQRSMicroservices.Framework
       SetService(new QueryBus());
       SetService(new AggregateRootRepository());
       SetService(new QueryRepository());
-      SetService<IEventStore>(new MemoryEventStore());
+      SetService<IEventStore>(new InMemoryEventStore());
 
       RegisterHandlers(commandHandlers, queryHandlers, queryModelBuilders);
     }
@@ -54,7 +54,7 @@ namespace CQRSMicroservices.Framework
       RegisterHandlers(commandHandlers, queryHandlers, queryModelBuilders);
 
       var eventBus = GetService<EventBus>();
-      foreach(KeyValuePair<Guid, IEnumerable<Event>> a in eventStore.GetAllEvents())
+      foreach(KeyValuePair<Guid, IEnumerable<Event>> a in eventStore.GetStreams())
       {
         foreach(var @event in a.Value)
         {
@@ -73,10 +73,10 @@ namespace CQRSMicroservices.Framework
       SetService(new CommandBus());
       SetService(new EventBus());
       SetService(new QueryBus());
-      SetService(new MemoryEventStore());
+      SetService(new InMemoryEventStore());
       SetService(aggregateRootRepository);
       SetService(queryRepository);
-      SetService<IEventStore>(new MemoryEventStore());
+      SetService<IEventStore>(new InMemoryEventStore());
 
       RegisterHandlers(commandHandlers, queryHandlers, queryModelBuilders);
     }
