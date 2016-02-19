@@ -1,38 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CQRSMicroservices.Framework;
 
 namespace CQRSMicroservices.Conversion
 {
   class EventListIterator
   {
-    public DateTime EventTime;
-    public Queue<Event> EventQueue;
-    public bool Finished;
+    private DateTime _currentStreamPosition;
+    private readonly Queue<Event> _events;
+    private bool _finished;
 
-    public EventListIterator()
+    public EventListIterator(Queue<Event> events)
     {
-      Finished = false;
-      EventTime = DateTime.MaxValue;
-      EventQueue = new Queue<Event>();
+      _currentStreamPosition = events.Peek().CommitTimestamp;
+      _events = events;
     }
 
     public Event GetEvent()
     {
-      Event e= EventQueue.Peek();
-      if(EventQueue.Count == 1)
+      Event e = _events.Dequeue();
+      if(!_events.Any())
       {
-        Finished = true;
+        _finished = true;
       }
       else
       {
-        EventQueue.Dequeue();
-        EventTime = EventQueue.Peek().EventDate;
+        _currentStreamPosition = _events.Peek().CommitTimestamp;
       }
       return e;
     }
 
+    public bool Finished => _finished;
 
-
+    public DateTime CurrentStreamPosition => _currentStreamPosition;
   }
 }
