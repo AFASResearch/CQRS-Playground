@@ -5,8 +5,9 @@ using System.Linq;
 
 namespace CQRSMicroservices.Framework
 {
-  public class MemoryEventStore : IEventStore
+  public class InMemoryEventStore : IEventStore
   {
+    // Lookout this is leaking object references, which for this prototype is no problem
 
     private readonly Dictionary<Guid, List<Event>> _eventstore = new Dictionary<Guid, List<Event>>();
 
@@ -30,7 +31,7 @@ namespace CQRSMicroservices.Framework
       return Enumerable.Empty<Event>();
     }
 
-    IEnumerable<KeyValuePair<Guid, IEnumerable<Event>>> IEventStore.GetAllEvents()
+    IEnumerable<KeyValuePair<Guid, IEnumerable<Event>>> IEventStore.GetStreams()
     {
       foreach(KeyValuePair<Guid, List<Event>> pair in _eventstore)
       {
@@ -38,13 +39,9 @@ namespace CQRSMicroservices.Framework
       }
     }
 
-    public IEnumerable<Guid> GetExistingArs()
+    public IEnumerable<Guid> GetExistingStreamIds()
     {
-      foreach(var e in _eventstore.Keys)
-      {
-        yield return e;
-      }
+      return _eventstore.Keys;
     }
-
   }
 }
